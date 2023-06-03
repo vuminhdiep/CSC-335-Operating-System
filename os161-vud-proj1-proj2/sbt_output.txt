@@ -1,0 +1,109 @@
+Script started on 2023-04-27 20:33:25-04:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="80" LINES="24"]
+]0;vud@cslab-20: ~/Documents/GitHub/os161-vud-proj1[01;32mvud@cslab-20[00m:[01;34m~/Documents/GitHub/os161-vud-proj1[00m$ cd root
+]0;vud@cslab-20: ~/Documents/GitHub/os161-vud-proj1/root[01;32mvud@cslab-20[00m:[01;34m~/Documents/GitHub/os161-vud-proj1/root[00m$ sysy[K161 kernel
+sys161: System/161 release 2.0.8, compiled Jan  9 2017 17:17:19
+
+OS/161 base system version 2.0.3
+Copyright (c) 2000, 2001-2005, 2008-2011, 2013, 2014
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (PROJ2 #88)
+
+832k physical memory available
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS/161 (System/161 2.x) features 0x0
+1 CPU online
+OS/161 kernel [? for menu]: ?t
+
+OS/161 tests menu
+    [at]  Array test                    [lt4]  Lock test 4           (1*)   
+    [at2] Large array test              [lt5]  Lock test 5           (1*)   
+    [bt]  Bitmap test                   [cvt1] CV test 1             (1)    
+    [tlt] Threadlist test               [cvt2] CV test 2             (1)    
+    [km1] Kernel malloc test            [cvt3] CV test 3             (1*)   
+    [km2] kmalloc stress test           [cvt4] CV test 4             (1*)   
+    [km3] Large kmalloc test            [cvt5] CV test 5             (1)    
+    [km4] Multipage kmalloc test        [rwt1] RW lock test          (1?)   
+    [km5] kmalloc coremap alloc test    [rwt2] RW lock test 2        (1?)   
+    [tt1] Thread test 1                 [rwt3] RW lock test 3        (1?)   
+    [tt2] Thread test 2                 [rwt4] RW lock test 4        (1?)   
+    [tt3] Thread test 3                 [rwt5] RW lock test 5        (1?)   
+    [llt] Linked List Tests             [semu1-22] Semaphore unit tests     
+    [cllt] Custom Linked List Tests     [fs1] Filesystem test               
+    [llt1] Linked List Tests 1          [fs2] FS read stress                
+    [llt2] Linked List Tests 2          [fs3] FS write stress               
+    [llt3] Linked List Tests 3          [fs4] FS write stress 2             
+    [llt4] Linked List Tests 4          [fs5] FS long stress                
+    [sem1] Semaphore test               [fs6] FS create stress              
+    [lt1]  Lock test 1           (1)    [hm1] HMAC unit test                
+    [lt2]  Lock test 2           (1*)   [sbt] Shared Buffer Tests           
+    [lt3]  Lock test 3           (1*)   
+
+    (1) These tests will fail until you finish the synch assignment.
+    (*) These tests will panic on success.
+    (?) These tests are left to you to implement.
+
+Operation took 3.459977680 seconds
+OS/161 kernel [? for menu]: sbt
+Produced item is 0
+Produced item is 1
+Produced item is 2
+Produced item is 3
+Produced item is 4
+Produced item is 5
+Produced item is 6
+Produced item is 7
+Produced item is 8
+Produced item is 9
+Consumed item is 0
+Consumed item is 1
+Consumed item is 2
+Consumed item is 3
+Consumed item is 4
+Consumed item is 5
+Consumed item is 6
+Consumed item is 7
+Consumed item is 8
+Consumed item is 9
+Produced item is 10
+Produced item is 11
+Produced item is 12
+Produced item is 13
+Produced item is 14
+Produced item is 15
+Produced item is 16
+Produced item is 17
+Produced item is 18
+Produced item is 19
+Consumed item is 10
+Consumed item is 11
+Consumed item is 12
+Consumed item is 13
+Consumed item is 14
+Consumed item is 15
+Consumed item is 16
+Consumed item is 17
+Consumed item is 18
+Consumed item is 19
+
+shared buffer test: SUCCESS
+Operation took 1.563842200 seconds
+OS/161 kernel [? for menu]: 
+]0;vud@cslab-20: ~/Documents/GitHub/os161-vud-proj1/root[01;32mvud@cslab-20[00m:[01;34m~/Documents/GitHub/os161-vud-proj1/root[00m$ cd ..
+]0;vud@cslab-20: ~/Documents/GitHub/os161-vud-proj1[01;32mvud@cslab-20[00m:[01;34m~/Documents/GitHub/os161-vud-proj1[00m$ exit
+exit
+
+Script done on 2023-04-27 20:34:07-04:00 [COMMAND_EXIT_CODE="0"]

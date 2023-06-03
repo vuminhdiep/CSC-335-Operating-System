@@ -1,0 +1,125 @@
+Script started on 2023-04-28 16:50:24-04:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="173" LINES="35"]
+]0;vud@fusilli: ~/Documents/GitHub/os161-vud-proj1[01;32mvud@fusilli[00m:[01;34m~/Documents/GitHub/os161-vud-proj1[00m$ cd root
+]0;vud@fusilli: ~/Documents/GitHub/os161-vud-proj1/root[01;32mvud@fusilli[00m:[01;34m~/Documents/GitHub/os161-vud-proj1/root[00m$ sys161 kernel
+sys161: System/161 release 2.0.8, compiled Jan  9 2017 17:17:19
+
+OS/161 base system version 2.0.3
+Copyright (c) 2000, 2001-2005, 2008-2011, 2013, 2014
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (PROJ2 #126)
+
+828k physical memory available
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS/161 (System/161 2.x) features 0x0
+1 CPU online
+OS/161 kernel [? for menu]: llt
+testnum: 0
+Starting linked-list-test-synch:...
+1: 0[A] 
+1: -1[B] 0[A] 
+1: -2[C] -1[B] 0[A] 
+1: -3[D] -2[C] -1[B] 0[A] 
+1: -4[E] -3[D] -2[C] -1[B] 0[A] 
+1: -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+1: -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+1: -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+1: -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+1: -9[J] -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+2: -10[A] -9[J] -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+2: -11[B] -10[A] -9[J] -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+2: -12[C] -11[B] -10[A] -9[J] -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+2: -13[D] -12[C] -11[B] -10[A] -9[J] -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+2: -14[E] -13[D] -12[C] -11[B] -10[A] -9[J] -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+2: -15[F] -14[E] -13[D] -12[C] -11[B] -10[A] -9[J] -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+2: -16[G] -15[F] -14[E] -13[D] -12[C] -11[B] -10[A] -9[J] -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+2: -17[H] -16[G] -15[F] -14[E] -13[D] -12[C] -11[B] -10[A] -9[J] -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+2: -18[I] -17[H] -16[G] -15[F] -14[E] -13[D] -12[C] -11[B] -10[A] -9[J] -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+2: -19[J] -18[I] -17[H] -16[G] -15[F] -14[E] -13[D] -12[C] -11[B] -10[A] -9[J] -8[I] -7[H] -6[G] -5[F] -4[E] -3[D] -2[C] -1[B] 0[A] 
+
+linked-list-test-synch: SUCCESS
+Operation took 2.701901520 seconds
+OS/161 kernel [? for menu]: llt 1
+testnum: 1
+Starting linked-list-test-synch:...
+1: 0[] 
+2: -1[] 0[] 
+
+linked-list-test-synch: SUCCESS
+Operation took 0.207894160 seconds
+OS/161 kernel [? for menu]: llt 2
+testnum: 2
+Starting linked-list-test-synch:...
+1: 
+2: 
+
+linked-list-test-synch: SUCCESS
+Operation took 0.115894160 seconds
+OS/161 kernel [? for menu]: llt 3
+testnum: 3
+Starting linked-list-test-synch:...
+1: 0[A] 
+1: 0[A] 1[B] 
+1: 0[A] 1[B] 2[C] 
+1: 0[A] 1[B] 2[C] 3[D] 
+1: 0[A] 1[B] 2[C] 3[D] 4[E] 
+1: 0[A] 1[B] 2[C] 3[D] 4[E] 5[F] 
+1: 0[A] 1[B] 2[C] 3[D] 4[E] 5[F] 6[G] 
+1: 0[A] 1[B] 2[C] 3[D] 4[E] 5[F] 6[G] 7[H] 
+1: 0[A] 1[B] 2[C] 3[D] 4[E] 5[F] 6[G] 7[H] 8[I] 
+1: 0[A] 1[B] 2[C] 3[D] 4[E] 5[F] 6[G] 7[H] 8[I] 9[J] 
+2: 0[A] 0[A] 1[B] 2[C] 3[D] 4[E] 5[F] 6[G] 7[H] 8[I] 9[J] 
+2: 0[A] 0[A] 1[B] 1[B] 2[C] 3[D] 4[E] 5[F] 6[G] 7[H] 8[I] 9[J] 
+2: 0[A] 0[A] 1[B] 1[B] 2[C] 2[C] 3[D] 4[E] 5[F] 6[G] 7[H] 8[I] 9[J] 
+2: 0[A] 0[A] 1[B] 1[B] 2[C] 2[C] 3[D] 3[D] 4[E] 5[F] 6[G] 7[H] 8[I] 9[J] 
+2: 0[A] 0[A] 1[B] 1[B] 2[C] 2[C] 3[D] 3[D] 4[E] 4[E] 5[F] 6[G] 7[H] 8[I] 9[J] 
+2: 0[A] 0[A] 1[B] 1[B] 2[C] 2[C] 3[D] 3[D] 4[E] 4[E] 5[F] 5[F] 6[G] 7[H] 8[I] 9[J] 
+2: 0[A] 0[A] 1[B] 1[B] 2[C] 2[C] 3[D] 3[D] 4[E] 4[E] 5[F] 5[F] 6[G] 6[G] 7[H] 8[I] 9[J] 
+2: 0[A] 0[A] 1[B] 1[B] 2[C] 2[C] 3[D] 3[D] 4[E] 4[E] 5[F] 5[F] 6[G] 6[G] 7[H] 7[H] 8[I] 9[J] 
+2: 0[A] 0[A] 1[B] 1[B] 2[C] 2[C] 3[D] 3[D] 4[E] 4[E] 5[F] 5[F] 6[G] 6[G] 7[H] 7[H] 8[I] 8[I] 9[J] 
+2: 0[A] 0[A] 1[B] 1[B] 2[C] 2[C] 3[D] 3[D] 4[E] 4[E] 5[F] 5[F] 6[G] 6[G] 7[H] 7[H] 8[I] 8[I] 9[J] 9[J] 
+
+linked-list-test-synch: SUCCESS
+Operation took 2.277894160 seconds
+OS/161 kernel [? for menu]: llt 4
+testnum: 4
+Starting linked-list-test-synch:...
+1: 0[J] 0[I] 0[H] 0[G] 0[F] 0[E] 0[D] 0[C] 0[B] 0[A] 
+2: 0[I] 0[H] 0[G] 0[F] 0[E] 0[D] 0[C] 0[B] 0[A] 
+
+linked-list-test-synch: SUCCESS
+Operation took 0.322549680 seconds
+OS/161 kernel [? for menu]: llt 5
+testnum: 5
+Starting linked-list-test-synch:...
+1: 
+2: 0[] 
+
+linked-list-test-synch: SUCCESS
+Operation took 0.185894160 seconds
+OS/161 kernel [? for menu]: 
+]0;vud@fusilli: ~/Documents/GitHub/os161-vud-proj1/root[01;32mvud@fusilli[00m:[01;34m~/Documents/GitHub/os161-vud-proj1/root[00m$ cd ..
+]0;vud@fusilli: ~/Documents/GitHub/os161-vud-proj1[01;32mvud@fusilli[00m:[01;34m~/Documents/GitHub/os161-vud-proj1[00m$ quit
+
+Command 'quit' not found, but can be installed with:
+
+snap install quit
+Please ask your administrator.
+
+]0;vud@fusilli: ~/Documents/GitHub/os161-vud-proj1[01;32mvud@fusilli[00m:[01;34m~/Documents/GitHub/os161-vud-proj1[00m$ exit
+exit
+
+Script done on 2023-04-28 16:51:00-04:00 [COMMAND_EXIT_CODE="127"]

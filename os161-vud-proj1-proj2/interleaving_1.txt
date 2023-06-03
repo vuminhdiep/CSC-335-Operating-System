@@ -1,0 +1,49 @@
+Note: In linked_list.c file, I put a comment //WARNING: possible bad interleavings to indicate that there might be bad interleavings when these lines run concurrently and I would put thread_yield() there
+Also I created an extra file called `interleaving_output_with_lock.txt` that show the output of all 5 interleaving scenarios that are solved after putting the lock on to fix the linked list.
+
+- In `linked_list_prepend` function, a bad interleaving could occur if two threads both call simultaneously. Then both thread would enter the if block and create a new node with key 0. Both nodes would become the new first node in the list, causing one of the nodes to be lost with its data.
+- The bug caused the length of the linked_list to be wrong: only 1 node is present; key is not unique; memory leak since one newnode is lost and inaccessible.
+- The behavior is expected to create 1 node only even after two threads are yielded since one of the newnode is lost. 
+
+Here is the panic error that the kernel raised when thread yielding enter the if block: `linked_list_thread_yield(1)`
+
+testnum: 1
+Starting linked-list-test-synch:...
+1: panic: Fatal exception 2 (TLB miss on load) in kernel mode
+panic: EPC 0x8000388c, exception vaddr 0x0
+panic: I can't handle this... I think I'll just die now...
+sys161: trace: software-requested debugger stop
+sys161: Waiting for debugger connection...
+
+
+
+Also another one is that if thread A executes the line `list -> first = newnode;` before thread B executes `f -> prev = newnode;` then thread B's prev pointer could potentially be pointing to a node that has been removed from the linked list if thread A has already updated the first pointer.
+- The bug caused the thread B to have dangling pointer, where a node has a null or invalid next pointer. Hence the bug can result in undefined behavior for accessing or modifying memory that are not allocated or overwriting other nodes.
+- The expected behavior is to add a newnode at the beginning of the linked list with the correct prev and next pointers, and updated the first and last pointers. The linked list should remain consistent with nodes linked together.
+- The actual behavior might be runtime error or work correctly but it's still a corrupted linked list with two threads prepending simultaneously.
+
+Here is the output of the linked_list when both threads prepending simultaneously: `linked_list_thread_yield(0)`
+testnum: 0
+Starting linked-list-test-synch:...
+12::  00[[AA]]  
+
+12::  --12[[BB]]  0-[1A[]B ]
+ 10:[ A-]3 [
+C2]:  --24[[BC]]  --13[[BC]]  0-[2A[]B ]
+ 1-:1 [-B5][ D0][ A-]4 [
+C2]:  --36[[CD]]  --25[[BD]]  --14[[BC]]  0-[3A[]C ]
+ 1-:2 [-B7][ E-]1 [-B6][ D0][ A-]5 [
+D2]:  --48[[CE]]  --37[[CE]]  --26[[DB]] - -51[D[B]] - 04[A[C]]  -
+13:[ -C9][ F-]2 [-B8][ E-]1 [-B7][ E0][ A-]6 [
+D2]:  --51[0D[]F ]- 4-[9C[]F ]- 3-[8C[]E ]- 2-[7B[]E ]- 1-[6B[]D ]0 [-A5][ D
+]1 :- 4-[1C1][ G-]3 [-C1]0 [-F2][ B-]9 [-F1][ B-]8 [0E[]A ]- 7
+[2E:]  --162[[DG]]  --51[1D[]G ]- 4-[1C0][ F-]3 [-C9][ F-]2 [-B8][ E-]1 [-B7][ E0][ A-]6 [
+D1]:  --51[3D[]H ]- 4-[1C2][ G-]3 [-C1]1 [-G2][ B-]1 0-[1F[]B ]- 90[[FA]]  -
+82[:E ]- 1-47[[HE]]  --163[[DH]]  --51[2D[]G ]- 4-[1C1][ G-]3 [-C1]0 [-F2][ B-]9 [-F1][ B-]8 [0E[]A ]- 7
+[1E:]  --165[[DI]]  --51[4D[]H ]- 4-[1C3][ H-]3 -[C1]2 -[G2][B -]1 -11[G[B]] - 01[A]0 [
+F2]:  --91[6F[]I ]- 8-[1E5][ I-]7 [-E1]4 [-H6][ D-]1 3-[5H[]D ]- 1-24[[GC]]  --131[[CG]]  --21[0B[]F ]- 1-[9B[]F ]0 [-A8][ E
+]1 :- 7-[1E7][ J-]6 [-D1]6 [-I5][ D-]1 5-[4I[]C ]- 1-43[[HC]]  --123[[BH]]  --11[2B[]G ]0 [-A1]1 [
+G2]:  --1108[[FJ]]  --91[7F[]J ]- 8-[1E6][ I-]7 [-E1]5 [-I6][ D-]1 4-[5H[]D ]- 1-34[[HC]]  --132[[CG]]  --21[1B[]G ]- 1-[1B0][ F0][ A-]9 [
+F] -8[E] -7[E] -6[D] -5[D] -4[C] -3[C] -2[B] -1[B] 0[A] 
+
+

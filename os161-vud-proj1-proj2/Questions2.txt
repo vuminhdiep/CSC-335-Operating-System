@@ -1,0 +1,37 @@
+1. The Linked_List_Node struct has four members:
+- prev: a pointer to the previous node in the linked list
+- next: a pointer to the next node in the linked list
+- key: an integer value used to identify or index the node in the linked list
+- data: a `void` pointer that can point to any type of data, depending on how it is used in a specific program (i.e, threadlist). The `void` pointer allows for flexibility in the type of data the linked list can hold, and type-casting is necessary to access the actual data stored in the node.
+
+2. This line of code declares a new data type called Linked_List using the typedef keyword. 
+The struct Linked_List specifies that this new data type has the same structure as a struct called Linked_List, which allows for the creation and manipulation of objects of type Linked_List using a simpler, cleaner syntax so you don't have to write struct all over the place anymore.
+
+3. The `kmalloc` is used to dynamically allocate memory from the kernel's heap memory and returns a pointer to the beginning of the allocated memory. 
+It is used when the size of the data structure is not known at compile time. The function takes a single argument, which is the number of bytes to allocate (sizeof). If out of memory, the function returns NULL.
+In Java, you can do it by using the `new` keyword followed by the class name of the object when creating an object. You do not need to specify the size of memory allocation like C because Java handles it automatically at compile time.
+e.g, Linked_List ll = new Linked_List();
+
+4. After booting the system with command `sys161 kernel`, the main program run with a menu and when I type `?t`, the code in `menu.c` look in the command table cmdtable[]. The corresponding value is pointing to cmd_testmenu which is a function to show the tests menu.
+In the *testmenu[], I then type `llt` which is for linked list test and the boolean OPT_CONCURRENT_LIST is then True and run the linked_list_test_run() which is a function implemented in `linked_list_test.c`
+The output of the linked_list_test is a screenshot that I saved as `linked-list-test-trace.png` in this repo.
+
+5. The purpose of `splhigh()` is for interleaving so that the tasks of two threads don't get mixed up. 
+The reason why it is called at the beginning of the two linked list test threads is to prevent pre-emption during the critical section of the code where the shared data structures (in this case linked list) are being accessed and modified. Pre-emption can cause race condition (which we learned earlier today) and inconsistent states of the linked lists, leading to incorrect test results. 
+By raising the interrupt priority level with splhigh(), the two linked list test threads are guaranteed to complete sequentially without being interrupted by other threads.
+
+When I commented out the `splhigh()` line and rebuilding, booting the system again, as you can see in the `linked-list-test-without-splhigh.png`,  it gave out ugly, gibberish results of linked_list. I suspect that the two threads run concurrently (thread1 is not finished printing and thread2 already started printing the linked_list). Hence, the two threads get mixed up and that's why you get the mixed characters from the two linked_list threads.
+When you leave `splhigh()` on, the two threads are run sequentially, thread1 finished printing out the linked_list and then thread2 started printing so that is why the characters are printed in correct order and not interrupted and the test results are correct.
+
+#####################################################################################################################
+Note: I added another option on the kernel menu called `cllt` which is `Custom Linked List Tests` that I wrote for all the functions in the Linked_List which doens't involve threads. So when booting the kernel if you want to run my Custom Linked List Test just following these commands:
+```
+cd os161/root/
+sys161 kernel
+?t
+cllt
+
+```
+If all the tests are passed, the printing statements will show up. You can see in the screenshot `custom_linked_list_test_screenshot.png` is the output of the kernel when I run all my linked list tests.
+I looked at how the arraytest.c is written and tried to replicate that in my custom_linked_list_test. I realized I should have written a helper function with loops to `KASSERT` both two ways of the linked_list (prev, next) or to input an arbitrary length of linked_list. Instead I hard coded like `KASSERT(list->first->next->next->next == list->last). 
+However I don't have much time left to make that changes and I already wrote too many `KASSERT`...Hope you can appreciate my effort of hard coding a lots of `KASSERT` (even though they look ugly) to make sure the functions were correctly implemented.

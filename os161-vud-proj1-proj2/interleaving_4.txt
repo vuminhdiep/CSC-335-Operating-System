@@ -1,0 +1,18 @@
+Note: In linked_list.c file, I put a comment //WARNING: possible bad interleavings to indicate that there might be bad interleavings when these lines run concurrently and I would put thread_yield() there.
+Also I created an extra file called `interleaving_output_with_lock.txt` that show the output of all 5 interleaving scenarios that are solved after putting the lock on to fix the linked list.
+
+- A bad interleaving could happen if thread B modifies the linked list (insert, prepend or remove_head) while thread A is iterating over the linked list to call `linked_list_printlist`. If a node is removed or inserted during the iteration, the iteration may skip or repeat the node, causing incorrect output.
+- The expected behavior would be the linked list get printed by thread A and thread B sequentially but the actual behavior caused by this interleaving is that thread A and thread B has linked list mixed up when printed.
+
+Here is the output when a thread prepend a node while another thread is iterating over to print list which results in a corrupted linked_list where two threads print simultaneously: `linked_list_thread_yield(4)`
+
+testnum: 4
+Starting linked-list-test-synch:...
+12::  p0a[nIi]c :0 [FHa]t a0l[ Ge]x c0e[pFt]i 0o[En]  40 [D(A]d d0r[Ce]s s0 [Be]r r0o[rA ]o n
+load) in kernel mode
+panic: EPC 0x8000382c, exception vaddr 0xdeadbeef
+panic: I can't handle this... I think I'll just die now...
+sys161: trace: software-requested debugger stop
+sys161: Waiting for debugger connection...
+
+

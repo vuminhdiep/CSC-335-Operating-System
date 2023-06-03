@@ -1,0 +1,34 @@
+Note: In linked_list.c file, I put a comment //WARNING: possible bad interleavings to indicate that there might be bad interleavings when these lines run concurrently.
+Also I created an extra file called `interleaving_output_with_lock.txt` that show the output of all 5 interleaving scenarios that are solved after putting the lock on to fix the linked list.
+
+- In `linked_list_insert`function, if two threads simultaneously attempt to insert a node with the same key, and both have arrived at the same point in the current traversal, the node to be inserted will be inconsistent as the linked list is corrupted or it could lead to deadlock situation 
+- The expected behavior would be one thread at a time to properly insert a node to the linked list, maintaining the order of the list by the key without any unexpected behavior or program unresponsive. 
+- The actual behavior would leads to the linked list being corrupted where nodes are missing or placed incorrectly as the two threads running simultaneously or the possible deadlock situation.
+
+This is the output of the linked list when both threads trying to insert at the same key: `linked_list_thread_yield(3)`
+testnum: 3
+Starting linked-list-test-synch:...
+12::  00[[AA]]  00[[AA]]  
+
+12:: 0 0[A[A]] 0 0[A[A]] 1 1[B[B] ]1 [1B[]B ]
+ 12:[ C0][ A
+]2 :0 [0A[]A ]1 [0B[]A ]1 [1B[]B ]2 [1C[]B ]2 [2C[]C ]
+ 12:[ C0][ A3][ D0][ A
+]2 :1 [0B[]A ]1 [0B[]A ]2 [1C[]B ]2 [1C[]B ]3 [2D[]C ]3 [2D[]C ]
+ 13:[ D0][ A3][ D0][ A4][ E1][ B
+]2 :1 [0B[]A ]2 [0C[]A ]2 [1C[]B ]3 [1D[]B ]3 [2D[]C ]4 [2E[]C ]4 [3E[]D ]
+ 13:[ D0][ A4][ E0][ A4][ E1][ B5][ F1][ B
+]2 :2 [0C[]A ]2 [0C[]A ]3 [1D[]B ]3 [1D[]B ]4 [2E[]C ]4 [2E[]C ]5 [3F[]D ]5 [3F[]D ]
+ 14:[ E0][ A4][ E0][ A5][ F1][ B5][ F1][ B6][ G2][ C
+]2 :2 [0C[]A ]3 [0D[]A ]3 [1D[]B ]4 [1E[]B 4][E 2][C 5][F 2][C 5][F 3][D 6][G 3][D 6][G 4][ E
+]1 :4 [0E[]A ]5 [0F[]A ]5 [1F[]B ]6 [1G[]B ]6 [2G[]C ]7 [2H[]C ]
+ 23:[ D0][ A3][ D0][ A4][ E1][ B4][ E1][ B5][ F2][ C5][ F2][ C6][ G3][ D6][ G3][ D7][ H4][ E7][ H4][ E
+]1 :5 [0F[]A ]5 [0F[]A ]6 [1G[]B ]6 [1G[]B ]7 [2H[]C ]7 [2H[]C ]8 [3I[]D ]
+ 23:[ D0][ A4][ E0][ A4][ E1][ B5][ F1][ B5][ F2][ C6][ G2][ C6][ G3][ D7][ H3][ D7][ H4][ E8][ I4][ E8][ I5][ F
+]1 :5 [0F[]A ]6 [0G[]A ]6 [1G[]B ]7 [1H[]B ]7 [2H[]C ]8 [2I[]C ]8 [3I[]D ]9 [3J[]D ]
+ 24:[ E0][ A4][ E0][ A5][ F1][ B5][ F1][ B6][ G2][ C6][G 2][C 7][H 3][D 7][H 3][D 8][I 4[]E ]8 [4I[]E ]9 [5J[]F ]9 [5J[]F ]
+ 6[G] 6[G] 7[H] 7[H] 8[I] 8[I] 9[J] 9[J] 
+
+
+We can see that the two threads simultaneously print out the linked_list when adding to the same position and the output is hence a corrupted linked_list with nodes tangled to each other.
+

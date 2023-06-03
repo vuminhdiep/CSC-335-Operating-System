@@ -1,0 +1,78 @@
+1. 
+1.1: The two synchronization mechanisms used by kprintf in order to make its console output atomic are:
+- A lock mechanism (mutex), represented by the "kprintf_lock" structure which ensures mutual exclusion between threads wishing to access the console, by using lock_acquire() and lock_release() operations.
+- A spinlock mechanism, represented by the "kprintf_spinlock" structure which also ensures mutual exclusion but uses different synchronization primitives, such as spinlock_acquire() and spinlock_release().
+This ensures that kprintf is thread-safe and can be used securely in both polled and non-polled mode and to prevent any race conditions may arise.
+
+1.2: The kernel might use two different mechanisms to protect console output based on whether the output is polled or not. If it is not polled, then a regular lock is used to ensure mutual exclusion between threads targeting console. On the other hand, if the output is polled, then a spinlock is used due to its ability to handle cases where locking overheads are unacceptably high, such as when console output is performed from within an interrupt routine.
+
+1.3: I looked at the file `src/kern/test/tt3.c` and found that the synchronization mechanism used by the kernel to run the thread tests are the semaphores and spinlock, and the function thread_yield() also behaves similar to splhigh function which prevents any interruptions
+In the linked_list_test_adder function there is a splhigh function, which is a synchronization mechanism that raises the interrupt level to a value where any interrupt that has a lower priority are blocked. This ensures that the function is executed without any interruptions.
+
+1.4: The reason why the output is still interleaving despite the two synchronization mechanisms is that the locks are not taken for the entirety of the output process. Specifically, the locks are acquired and released for each character printed, which greatly increases the opportunity for interleavings. 
+
+2. Two other subsystems that used synchronization mechanisms are:
+- The file `src/kern/fs/semfs/semfs_obj.c` used condition variables (cv) and lock synchronization mechanisms. They are used to protect the access to the semfs_sem struct and semaphore table (semfs->semfs_sems) from multiple threads that may access or modify them concurrently. The code also tests for the ownership of lock before proceeding to modify the semaphores in semfs_sem_insert. This ensures that only one thread can modify the semaphore table at a time, preventing race conditions and data inconsistencies.
+This code defines the data structures and functions for creating, destroying and managing semaphores in the SemFS file system. Specifically, this code defines constructors and destructors for semfs_sem and semfs_direntry structs, as well as helper functions for inserting semaphores into the semaphore table.
+The code in `semfs_obj.c` is not afflicted by the same problem as kprintf. The semfs_obj.c file uses synchronization mechanisms such as locks and condition variables to prevent race conditions when accessing shared data or modifying it. The locks are used to ensure mutual exclusion, which prevents data from being used simultaneously by multiple threads. The condition variables help to allow a thread to wait while another thread modifies shared data.
+
+- The file `src/kern/dev/generic/console.c` used semaphores and locks synchronization mechanisms. They are used to ensure atomicity, prevent critical sections from being interrupted, and to prevent race conditions when reading or writing to the console. Specifically, two semaphores are used to synchronize console reads and writes. Additionally, two locks are used to allow multiple readers to access the console without locking out writers, and vice versa.
+The purpose of console.c is to provide a machine independent console driver with the basic functionality of printing and reading characters.
+The code in `console.c` is not afflicted by the same problem as kprintf. The console.c file uses synchronization mechanisms such as semaphores and locks to ensure atomicity and prevent race conditions when reading or writing to the console.
+
+Conversely, `kprintf.c` only uses locks and spinlock to allow multiple readers to access the console without locking out writers and vice versa. The use of locks for non-polled context can lead to the possibility of deadlocks or race conditions, unlike semaphores, which are specifically designed to prevent such problems.
+
+3:
+3.1: The struct semaphore defines a Dijkstra-style semaphore, which is a synchronization mechanism used to restrict access to a shared resource in a multi-threaded environment. Here are the purposes of the attributes:
+- `char *sem_name`: This attribute is used to store a name for the semaphore which is purely for debugging purposes. A copy of the name is made internally for easy reference.
+- `struct wchan *sem_wchan`: This attribute references the wait channel on which threads wait when they try to acquire the semaphore and it is not available.
+- `struct spinlock sem_lock`: This attribute is a spinlock used to mutually exclude concurrent access to the semaphore's internal state, such as the count of available resources.
+- `volatile unsigned sem_count`: This attribute represents the count of available resources on which the semaphore operates. It is declared `volatile` (a keyword in C for qualifying variable) to ensure that the compiler doesn't optimize away any accesses to it, which could cause synchronization problems. `volatile` forces the compiler to load and store the value on every use.
+
+3.2: The sem_create() function creates a new semaphore and initializes its attributes with the provided arguments. Here is the purpose of each line that I put by comments:
+```
+sem_create(const char *name, unsigned initial_count)
+{
+    struct semaphore *sem; //declares a pointer to a semaphore struct, which is used to store the newly created semaphore.
+
+    sem = kmalloc(sizeof(*sem)); //allocates memory for sem using the kmalloc() function, which returns a pointer to the allocated memory.
+    if (sem == NULL) { //Check if the allocation fails, return NULL.
+        return NULL;
+    }
+
+    sem->sem_name = kstrdup(name); //Allocate space for a copy of the semaphore name using kstrdup() and assign it to sem->sem_name. This is made internally for easy reference.
+    if (sem->sem_name == NULL) { //If the allocation fails, free the previously allocated memory for sem and return NULL.
+        kfree(sem);
+        return NULL;
+    }
+
+    sem->sem_wchan = wchan_create(sem->sem_name); //Create a wait channel using wchan_create() with sem->sem_name as the name of the wait channel. Assign the new wait channel to sem->sem_wchan.
+    if (sem->sem_wchan == NULL) { //If the wait channel creation fails, free the previously allocated memory for sem and its name, and return NULL.
+        kfree(sem->sem_name);
+        kfree(sem);
+        return NULL;
+    }
+
+    spinlock_init(&sem->sem_lock); //Initialize the semaphore lock with spinlock_init() and pass in a pointer to sem->sem_lock.
+    sem->sem_count = initial_count; //Set the initial count of available resources for the semaphore to initial_count.
+
+    return sem; //Return the pointer to the initialized semaphore.
+}
+
+```
+
+3.3: If the wait channel was not locked before releasing the spinlock, there could be a race condition where another thread acquires the spinlock before the current thread tries to acquire it again. This could lead to deadlock if the other thread is also blocked waiting on the same semaphore, and neither thread can proceed until the other releases the semaphore.
+By locking the wait channel before releasing the spinlock, we can ensure that only one thread at a time can access the semaphore, preventing a potential deadlock scenario.
+
+4: The implementation of wchan (wait channel) is in `src/kern/thread/thread.c` file.
+4.1: Spinlocks are used in the function wchan_isempty() to protect the critical section when checking whether a wait channel is empty. The wait channel could be accessed by multiple threads simultaneously, and this could lead to a race condition where multiple threads could try to modify the same variable at the same time. Therefore, using spinlocks to synchronize access helps to ensure that only one thread at a time can access the wait channel.
+
+4.2: The function responsible for putting threads to sleep is wchan_sleep(). This function assumes that the spinlock passed to it is already held by the calling thread and that the thread has no other spinlocks. It also assumes that the wait channel passed to it is empty before the thread goes to sleep.
+
+4.3:
+- In the implementation of spinlock in `src/kern/thread/spinlock.c`, the interrupts are disabled in the spinlock_acquire() function using the splraise() function call. Specifically, interrupts are disabled starting from IPL_NONE to IPL_HIGH.
+- In the implementation of wait channel (wchan) in `src/kern/thread/thread.c`, in the wchan_sleep() function, the KASSERT line to make sure that the current thread is not in an interrupt handler.
+- In the implementation of P() of semaphores in `src/kern/thread/synch.c`, in the P() function after the KASSERT line to make sure that the current thread is not in an interrupt handler: `KASSERT(curthread->t_in_interrupt == false);`
+This is because it is not safe to sleep when in an interrupt handler, so we need to ensure this is not the case.
+
+

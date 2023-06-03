@@ -1,0 +1,29 @@
+Note: In linked_list.c file, I put a comment //WARNING: possible bad interleavings to indicate that there might be bad interleavings when these lines run concurrently and I would put thread_yield() there.
+Also I created an extra file called `interleaving_output_with_lock.txt` that show the output of all 5 interleaving scenarios that are solved after putting the lock on to fix the linked list.
+
+- In `linked_list_remove_head` function, if thread A executes list -> first = head -> next; before thread B executes head -> next -> prev = NULL; thread A may set list -> first to a deleted node.
+- It is expected to have the linked list updating correctly one thread at a time, but the actual behavior caused by synchronization between threads can lead to program crashes or data inconsitencies. If one thread deletes the head node before another thread updates the list pointer, the list pointer may end up pointing to a deleted node, which can cause errors or program crashes when trying to access that node or its data.
+Here is the output when thread A executes `list->first = head->next;` before thread B executes: `linked_list_thread_yield(5)`
+
+testnum: 5
+Starting linked-list-test-synch:...
+12: :
+ panic: Fatal exception 2 (TLB miss on load) in kernel mode
+panic: EPC 0x8000382c, exception vaddr 0x0
+panic: I can't handle this... I think I'll just die now...
+sys161: trace: software-requested debugger stop
+sys161: Waiting for debugger connection...
+
+
+
+Another bad interleaving could happen if both threads try to remove head of an empty list at the same time. In this case both threads would modify the same head node and its key and data would be set to uninitialized value, causing unexpected behaviors that make the linked list corrupted with a missing node.
+- The expected behavior would be to have one thread modify the linked list at a time but the actual behavior would be both threads can pass the NULL check and enter the critical section simultaneously. Hence both threads can modify the same linked list which cause inconsistencies in the returned key and data.
+
+Here is the output when two threads are trying to remove head of an empty linked list simultaneously: `linked_list_thread_yield(2)`
+
+testnum: 2
+Starting linked-list-test-synch:...
+12::  
+
+
+If it is done correctly, both thread 1 and thread 2 should be on different lines to run sequentially instead of being on the same line since they are interleaved
